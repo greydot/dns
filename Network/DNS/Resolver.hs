@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE CPP, OverloadedStrings #-}
 
 -- | DNS Resolver and generic (lower-level) lookup functions.
@@ -231,9 +232,8 @@ lookupSection section rlv dom typ = do
     dom' = if "." `isSuffixOf` dom then dom else dom ++ "."
     correct r = rrname r == dom' && rrtype r == typ
     -}
-    correct (ResourceRecord _ rrtype _ _) = rrtype == typ
-    correct (OptRecord _ _ _ _) = False
-    toRData x = map getRdata . filter correct $ section x
+    correct ResourceRecord{..} = rrtype == typ
+    toRData x = map rdata . filter correct $ section x
 
 -- | Extract necessary information from 'DNSMessage'
 fromDNSMessage :: DNSMessage -> (DNSMessage -> a) -> Either DNSError a
